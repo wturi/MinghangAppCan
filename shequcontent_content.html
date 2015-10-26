@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="css/ui-box.css">
+    <link rel="stylesheet" href="css/ui-base.css">
+    <link rel="stylesheet" href="css/ui-color.css">
+    <link rel="stylesheet" href="css/appcan.icon.css">
+    <link rel="stylesheet" href="css/appcan.control.css">
+    <link rel="stylesheet" href="shequcontent_content/css/main.css">
+    <!-- <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
+    -->
+    <style type="text/css">
+        .title {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .huifu {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 1.5em;
+            color: #00a0ea;
+        }
+    </style>
+</head>
+<body class="um-vp bc-bg" ontouchstart>
+    <div class="ub ub-ver" id="comment"></div>
+    <script src="js/jQuery-2.1.4.min.js"></script>
+    <script src="bootstrap/js/bootstrap.js"></script>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script src="js/AllParamter.js"></script>
+    <script>
+        appcan.ready(function () {
+            appcan.initBounce();
+            PostListajax();
+        })
+
+        function PostListajax() {
+            var topicid = window.localStorage["topicid"];
+            appcan.request.ajax({
+                type: "get",
+                async: false,
+                dataType: "jsonp",
+                url: webserviceurl,
+                data: { type: "PostList", topicid: topicid },
+                jsonp: "callback",
+                timeout: 3000,
+                success: function (data) {
+                    var str = '';
+                    str += '<div class="ub ub-ver topiclist"><ul class="ubb ub bc-border lis"> <li class="ub-f1 ub ub-ver"><div class="ub ub-f1 ub-ac">'
+                    + '<div class="ut-s ulev-4 sc-text-active ">' + data.Post1.PostUsername + '</div></div>'
+                    + '<div class="ub umar-t"><div class="ub-f1 ub t-gra-comm ulev-2"><div class="umar-r-comm">' + data.Post1.UpdateTime + ' </div></div></div><div class="t-bla ulev-4 ub-f1 umar-t"><b>'
+                    + data.Post1.Title + '</b><br/>' + data.Post1.Message + '</div></li></ul></div>';
+
+
+                    $.each(data.Posts, function (i, items) {
+                        str += '<div class="ub ub-ver topiclist"><ul class="ubb ub bc-border lis"> <li class="ub-f1 ub ub-ver"><div class="ub ub-f1 ub-ac">'
+                    + '<div class="ut-s ulev-4 sc-text-active ">' + items.PostUsername + '</div></div>'
+                    + '<div class="ub umar-t"><div class="ub-f1 ub t-gra-comm ulev-2"><div class="umar-r-comm">' + items.UpdateTime + ' </div></div></div><div class="t-bla ulev-4 ub-f1 umar-t"><b>'
+                    + items.Message + '</b></div></li></ul></div>';
+                    })
+                    $('#comment').empty().html(str);
+                }
+            })
+        }
+        
+        function tijiao(text) {
+            var topicid = window.localStorage["topicid"];
+            var usename = window.localStorage.usename + "_" + window.localStorage.useid;
+            var client = window.localStorage["IP"];
+            var content = text;
+            var usepwd = window.localStorage.usepwd;
+
+            appcan.request.ajax({
+                type: "get",
+                async: false,
+                dataType: "jsonp",
+                url: webserviceurl,
+                data: { type: "BBSPost", topicid: topicid, usename: usename, clientip: client, content: content, usepwd:usepwd },
+                jsonp: "callback",
+                timeout: 3000,
+                success: function (data) {
+                    if (data == 1) {
+                        appcan.window.openToast("回复成功！", 1000);
+                        setTimeout(function () {
+                            PostListajax();
+                        }, 1300)
+                    } else {
+                        appcan.window.openToast("回复成功！", 1000);
+                    }
+                    $('#PublishContent').val("");
+                }
+            })
+        }
+        
+        function huifu(){
+            appcan.window.prompt({
+                    title : "回复",
+                    content : "请输入回复内容",
+                    buttons : ['提交', '稍后再说'],
+                    defaultValue:"",
+                    callback : function(err, data, dataType, optId) {
+                        if(data.num===0){
+                            tijiao(data.value);
+                        }
+                    }
+                });
+        }
+    </script>
+</body>
+</html>

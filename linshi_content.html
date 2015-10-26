@@ -1,0 +1,392 @@
+﻿<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <link href="bootstrap/DateTime/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="bootstrap/DateTime/bootstrap-datetimepicker.css" rel="stylesheet" />
+    <style type="text/css">
+        .row {
+            margin-top: 1.5em;
+            margin-left: 0.5em;
+            margin-right: 0.5em;
+        }
+
+        .alert-dismissible {
+            display: inline-block;
+            padding-top: 0.3em;
+            padding-bottom: 0.55em;
+            margin-right: 0.3em;
+        }
+
+        .panel-body {
+            padding: 0;
+        }
+
+        .panel-heading {
+            height: 55px;
+        }
+
+        #myModalPiZhun .modal-body button {
+            margin: 0.5em 0.7em;
+        }
+    </style>
+</head>
+<body class="um-vp bc-bg" ontouchstart>
+    <div class="row">
+        <div class="col-md-12">
+            <input type="text" class="form-control" id="PeblishTitle" placeholder="请输入标题">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <input type="text" class="form-control" id="PeblishPeople" tag="" placeholder="点击选择批准人" readonly="readonly" data-toggle="modal" data-target="#myModalPiZhun" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <textarea class="form-control" id="PublishContent" rows="6" placeholder="请输入内容"></textarea>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <!-- 人员 -->
+            <div class="panel panel-default">
+                <input type="hidden" id="Peopleid" />
+                <div class="panel-heading">
+                    <h4 class="pull-left">人员</h4>
+                    <button type="button" class="btn btn-success pull-right tianjia" tag="1" data-toggle="modal" data-target="#myModalPeople">+ 添加</button>
+                </div>
+                <div class="panel-body">
+                    <div>
+                        <table class="table table-striped table-hover">
+                            <tr>
+                                <th>姓名</th>
+                                <th>手机号</th>
+                                <th>操作</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- 车辆 -->
+            <div class="panel panel-default">
+                <input type="hidden" id="Carid" />
+                <div class="panel-heading">
+                    <h4 class="pull-left">车辆</h4>
+                    <button type="button" class="btn btn-success pull-right tianjia" tag="2" data-toggle="modal" data-target="#myModalCar">+ 添加</button>
+                </div>
+                <div class="panel-body">
+                    <div>
+                        <table class="table table-striped table-hover">
+                            <tr>
+                                <th>车牌</th>
+                                <th>车型</th>
+                                <th>操作</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- 物品 -->
+            <div class="panel panel-default">
+                <input type="hidden" id="Productid" />
+                <div class="panel-heading">
+                    <h4 class="pull-left">物品</h4>
+                    <button type="button" class="btn btn-success pull-right tianjia" tag="3" data-toggle="modal" data-target="#myModalProduct">+ 添加</button>
+                </div>
+                <div class="panel-body">
+                    <div>
+                        <table class="table table-striped table-hover">
+                            <tr>
+                                <th>名称</th>
+                                <th>数量</th>
+                                <th>操作</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button type="button" id="btnzong" class="btn btn-info">确认提交</button>
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <!-- 人员选择框 -->
+    <div class="modal fade" id="myModalPeople" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">人员选择</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">姓名</label>
+                                <input type="email" class="form-control" id="PeopleName" placeholder="来访人员姓名">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">手机号</label>
+                                <input type="text" class="form-control" id="PeoplePhone" placeholder="来访人员手机号">
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-info xixniqueren" tag="1">确认信息</button>
+                            </div>
+                        </div>
+                        <div class="col-md-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--车辆选择框 -->
+    <div class="modal fade" id="myModalCar" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">车辆选择</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">车牌</label>
+                                <input type="email" class="form-control" id="CarLicence" placeholder="来访车辆车牌号">
+                            </div>
+                            <div class="form-group">
+                                <label for="exampleInputPassword1">车型</label>
+                                <input type="text" class="form-control" id="CarType" placeholder="来访车辆车型">
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-info xixniqueren" tag="2">确认信息</button>
+                            </div>
+                        </div>
+                        <div class="col-md-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--物品选择框 -->
+    <div class="modal fade" id="myModalProduct" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="quxiao">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">物品选择</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">物品名称</label>
+                                <input type="email" class="form-control" id="ProductName" placeholder="来访物品名称">
+                            </div>
+                            <div class="form-group">
+                                <label>物品数量</label>
+                                <input type="number" class="form-control" id="ProdutNumber" placeholder="来访物品数量" />
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-info xixniqueren" tag="3">确认信息</button>
+                            </div>
+                        </div>
+                        <div class="col-md-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--批准人选择框-->
+    <div class="modal fade" id="myModalPiZhun" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">批准人选择</h4>
+                    <ol class="breadcrumb pizhunrumb">
+                        <li>
+                            <a href="#" tag="0" class="bmt" id="shou">园区</a>
+                        </li>
+                    </ol>
+                </div>
+                <div class="modal-body">
+                    <div class="page-header">
+                        <h3>选择部门</h3>
+                    </div>
+                    <div class="row bumen"></div>
+                    <div class="page-header">
+                        <h3>选择人员</h3>
+                    </div>
+                    <div class="row renyuan"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/jQuery-2.1.4.min.js"></script>
+    <script src="js/bootstrap-datetimepicker.js"></script>
+    <script src="bootstrap/js/bootstrap.js"></script>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script src="js/AllParamter.js"></script>
+    <script>
+        //点击添加按钮 弹出模态框 》》》 填写临时人员信息
+        $(".tianjia").click(function () {
+            //var tag = $(this).attr('tag');
+            var id = $(this).attr('data-target');
+            $(id).find('input').val('');
+        })
+        //填写信息 并 添加到表单
+        $(document).on('click', '.xixniqueren', function () {
+            var tag = $(this).attr('tag');
+            if (tag == '1') {
+                PeopleInsert();
+            } else if (tag == '2') {
+                CarInsert();
+            } else if (tag == '3') {
+                ProductInsert();
+            }
+        })
+
+        //删除已添加信息
+        $(document).on('click', '.shanchu', function () {
+            var children = $(this).parent().parent().children();
+            var input = $(this).parent().parent().parent().parent().parent().parent().parent().find('input[type="hidden"]');
+            var str = '';
+            for (var i = 0; i < children.length - 1; i++) {
+                str += children.eq(i).text() + '|';
+            }
+            str = str.substring(0, str.length - 1);
+            input.val($.trim(input.val().replace(str, '')));
+            $(this).parent().parent().remove();
+
+        })
+
+        //临时人员资料 并 添加到页面
+        function PeopleInsert() {
+            var id = $('#myModalPeople');
+            var name = id.find('#PeopleName').val();
+            var phone = id.find('#PeoplePhone').val();
+            //var zhengjian = id.find('#zhengjian').is(':checked');
+            var zhengjian = id.find('#PeopleCertificates').val();
+            $('#Peopleid').val($('#Peopleid').val() + name + '|' + phone + '|' + zhengjian + ' ');
+            var table = $('#Peopleid').parent().find('.table');
+            var str = '<tr><td>' + name + '</td><td>' + phone + '</td><td><a class="btn btn-warning shanchu">删除</a></td></tr>';
+            table.append(str);
+            id.find('input').val('');
+        }
+
+        //临时车辆资料 并 添加到页面
+        function CarInsert() {
+            var id = $('#myModalCar');
+            var licence = id.find('#CarLicence').val();
+            var type = id.find('#CarType').val();
+            $('#Carid').val($('#Carid').val() + licence + '|' + type + ' ');
+            var table = $('#Carid').parent().find('.table');
+            var str = '<tr><td>' + licence + '</td><td>' + type + '</td><td><a class="btn btn-warning shanchu">删除</a></td></tr>'
+            table.append(str);
+            id.find('input').val('');
+        }
+
+        //临时物品资料 并 添加到页面
+        function ProductInsert() {
+            var id = $('#myModalProduct');
+            var name = id.find('#ProductName').val();
+            var genera = id.find('#ProductGenera').val();
+            var number = id.find('#ProdutNumber').val();
+            $('#Productid').val($('#Productid').val() + name + '|' + genera + '|' + number + ' ');
+            var table = $('#Productid').parent().find('.table');
+            var str = '<tr><td>' + name + '</td><td>' + number + '</td><td><a class="btn btn-warning shanchu">删除</a></td></tr>'
+            table.append(str);
+            id.find('input').val('');
+        }
+
+        //弹出批准人选择框
+        $('#PeblishPeople').click(function () {
+            $('#shou').parent().nextAll().remove();
+            pizhun(0);
+        })
+
+        function pizhun(pid) {
+            $('.bumen').empty();
+            $('.renyuan').empty();
+            appcan.request.ajax({
+                type: "get",
+                async: false,
+                dataType: "jsonp",
+                url: webserviceurl,
+                data: { type: "pizhunren", pizhunrenid: pid },
+                jsonp: "callback",
+                success: function (data) {
+                    var stra = '';
+                    $.each(data.BuMens, function (i, item) {
+                        stra += '<button class="col-lg-2 btn btn-info bumenbt" tag=" ' + item.BuMenId + ' "   >' + item.BuMenName + '</button>';
+                    })
+                    $('.bumen').append(stra);
+                    var strb = '';
+                    $.each(data.RenYuans, function (i, item) {
+                        strb += '<button class="col-lg-2 btn btn-info renyuanbt" tag=" ' + item.RenYuanId + ' ">' + item.RenYuanName + '</button>'
+                    })
+                    $('.renyuan').append(strb);
+                },
+                error: function (xhr, status) {
+                }
+
+
+            })
+        }
+
+        //点击部门刷新
+        $(document).on('click', '.bumenbt', function () {
+            var tag = $(this).attr('tag');
+            var name = $(this).text();
+            pizhun(tag);
+            $('.pizhunrumb').append(' <li><a href="#" tag="' + tag + '" class="bmt">' + name + '</a></li>')
+        })
+
+
+        //点击路径
+        $(document).on('click', '.bmt', function () {
+            var tag = $(this).attr('tag');
+            pizhun(tag);
+            $(this).parent().nextAll().remove();
+        })
+
+
+        //选择人员
+        $(document).on('click', '.renyuanbt', function () {
+            var tag = $(this).attr('tag');
+            var name = $(this).text();
+            $('#PeblishPeople').val(name);
+            $('#PeblishPeople').attr('tag', tag);
+            $('#myModalPiZhun').modal('hide');
+        })
+
+
+    </script>
+
+</body>
+</html>

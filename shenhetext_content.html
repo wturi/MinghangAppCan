@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="css/ui-box.css">
+    <link rel="stylesheet" href="css/ui-base.css">
+    <link rel="stylesheet" href="css/ui-color.css">
+    <link rel="stylesheet" href="css/appcan.icon.css">
+    <link rel="stylesheet" href="css/appcan.control.css">
+    <link rel="stylesheet" href="shenhetext_content/css/main.css">
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+    <div class="ub ub-ver ub-fv" id="bodycontent">
+        <div class="ubb ubt bc-border umar-at1 uinn-a1 c-wh">
+            <div class=" line-hei ulev-1 t-gra-85" id="contenttile"></div>
+        </div>
+        <div class="ub ubb ubt bc-border umar-at1 uinn-det2 c-wh ub-ac">
+            <div class="t-gra-4e ulev-1 ub-f1">类别</div>
+            <div class="t-gra-85 ulev-1 tx-r" id="contenttype"></div>
+        </div>
+        <div class="ub ubb ubt bc-border umar-at1 uinn-det2 c-wh ub-ac">
+            <div class="t-gra-4e ulev-1 ub-f1">申请人</div>
+            <div class="t-gra-85 ulev-1 tx-r" id="contentupdater"></div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">是否通过审核?</h4>
+                </div>
+                <div class="modal-body text-centent">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <button type="button" class="btn btn-primary btn-lg btn-block shenhe" bools="1">通过</button>
+                        </div>
+                        <div class="col-xs-6">
+                            <button type="button" class="btn btn-warning btn-lg btn-block" id="butongguo">不通过</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer hide">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <textarea class="form-control" id="PublishContent" rows="6" placeholder="请输入审核不通过意见！"></textarea>
+                        </div>
+                        <div class="col-xs-12" style="margin-top:1em;">
+                            <button type="button" class="btn btn-primary btn-lg btn-block shenhe" bools="0">提交意见</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/jQuery-2.1.4.min.js"></script>
+    <script src="js/bootstrap-datetimepicker.js"></script>
+    <script src="bootstrap/js/bootstrap.js"></script>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script src="js/appcan.slider.js"></script>
+    <script src="js/AllParamter.js"></script>
+    <script type="text/javascript">
+        appcan.ready(function () {
+            appcan.initBounce();
+            selectshenhe();
+        });
+
+        function selectshenhe() {
+            var content = window.localStorage.shenhetexttitle;
+            var updater = window.localStorage.shenheupdater;
+            var typename = window.localStorage.shenhetypename;
+            //alert(content);
+            var contents = content.split('|+|');
+            if (contents.length > 2) {
+                $('#contenttile').text(contents[1]);
+            } else {
+                $('#contenttile').text(contents[1]);
+            }
+            
+            $('#contentupdater').text(updater);
+            $('#contenttype').text(typename);
+            if (contents.length > 2) {
+                var str = '<div class="ub ubb ubt bc-border umar-at1 uinn-det2 c-wh ub-ac">' + '<div class="t-gra-4e ulev-1 ub-f1">申请数量</div>' + '<div class="t-gra-85 ulev-1 tx-r">' + contents[2] + '</div></div>';
+                $('#bodycontent').children().eq(0).after(str);
+            }
+        };
+
+
+        $('#butongguo').click(function () {
+            $('.modal-body').hide();
+            $('.modal-footer').removeClass('hide');
+        })
+
+        $('.shenhe').click(function () {
+            var id = window.localStorage.shenhetextid;
+            var content = $('#PublishContent').val();
+            var bools = $(this).attr('bools');
+            appcan.request.ajax({
+                type: "get",
+                async: false,
+                dataType: "jsonp",
+                url: webserviceurl,
+                data: {
+                    type: "shenhetijiao",
+                    applyid: id,
+                    content: content,
+                    applybool: bools,
+                },
+                jsonp: "callback",
+                timeout: 3000,
+                success: function (data) {
+                    if(data==0){
+                        appcan.window.openToast("审核失败!", 2000);
+                    }else{
+                         appcan.window.openToast("审核成功!", 2000);
+                         setTimeout(function(){
+                             var str = window.localStorage.shenhe_drawerstr;
+                            if(str==null||str==""){
+                                str="";
+                            }
+                            var typeid = window.localStorage.shenhe_drawertypeid;
+                            uexWindow.evaluatePopoverScript("shenhe", "shenhe_content", "SelectAllceshi('" + str + "','" + typeid + "','0');");
+                            appcan.window.evaluateScript({ name: 'shenhetext', scriptContent: 'appcan.window.close(-1);' });
+                         },2000);
+                    }
+                }
+            })
+
+        })
+    </script>
+</body>
+
+</html>

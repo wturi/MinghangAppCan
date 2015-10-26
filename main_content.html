@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="css/ui-box.css">
+    <link rel="stylesheet" href="css/ui-base.css">
+    <link rel="stylesheet" href="css/ui-color.css">
+    <link rel="stylesheet" href="css/appcan.icon.css">
+    <link rel="stylesheet" href="css/appcan.control.css">
+    <link rel="stylesheet" href="main_content/css/main.css">
+    <style type="text/css">
+        .uinn-me2 {
+            padding: 0;
+            padding-bottom: 0.5em;
+        }
+
+        .uw-app1 {
+            float: left;
+            height: 20%;
+        }
+    </style>
+</head>
+<body class="um-vp bc-bg" ontouchstart>
+    <div class="uinn-me2 ub ub-pc">
+        <div id="slider" class="slider"></div>
+    </div>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script src="js/appcan.slider.js"></script>
+    <script src="js/appcan.listview.js"></script>
+    <script src="js/jquery-1.8.2.js"></script>
+    <script src="js/AllParamter.js"></script>
+    <script>
+        appcan.ready(function () {
+            gonggao();
+            menus();
+            zuixin();
+        })
+
+        function gonggao() {
+            appcan.request.ajax({
+                type: "get",
+                async: false,
+                dataType: "jsonp",
+                url: webserviceurl,
+                data: {
+                    type: "gonggao",
+                    pageindex: 0,
+                    pagenumber: 3
+                },
+                jsonp: "callback",
+                timeout: 3000,
+                success: function (data) {
+                    var slider = appcan.slider({
+                        selector: '#slider',
+                        aspectRatio: 9 / 16,
+                        hasLabel: true,
+                        index: 1,
+                        auto: 2000
+                    });
+                    var str = '[';
+                    $.each(data, function (i, item) {
+                        str += '{img:"' + imgurl + item.fs[0].FilePath + '",label: "' + item.pp.PeblishTitle + '"},';
+                    })
+                    str += ']';
+                    slider.set(eval("(" + str + ")"));
+
+                    //alert(typeof(slider));
+                    slider.on("clickItem", function (index, data) {
+                        //appcan.window.open("gonggao", "gonggao.html");
+                        appcan.window.open({
+                            name: 'gonggao',
+                            dataType: 0,
+                            aniId: "5",
+                            data: 'gonggao.html'
+                        });
+                        //uexVideo.open("http://devimages.apple.com/iphone/samples/bipbop/gear1/prog_index.m3u8");
+                    })
+                },
+                erroe: function (text) {
+                }
+            })
+        };
+
+        function menus() {
+            var actorid = window.localStorage.actorid;
+            //alert(actorid);
+            appcan.request.ajax({
+                type: "get",
+                async: false,
+                dataType: "jsonp",
+                url: webserviceurl,
+                data: {
+                    type: "menusgongneng",
+                    actorid: actorid
+                },
+                jsonp: "callback",
+                timeout: 3000,
+                success: function (data) {
+
+                    var str = '';
+                    $.each(data, function (i, item) {
+                        $.each(item.List, function (i, items) {
+                            //移动社区、电子地图、实时监控
+                            if (item.Type == 'Phone' && items.ischecked == true) {
+                                str += items.Type;
+                                return true;
+                            }
+                            //业务申请、移动审核
+                            if (items.ischecked == true && items.isphone == true && item.FunctionName.indexOf('园区') == -1) {
+                                str += item.Type;
+                                return false;
+                            }
+                        })
+                    })
+                    $('#slider').parent().after(str);
+                    // alert(str);
+                    window.localStorage.menusdata = JSON.stringify(data);
+                }
+            })
+        }
+
+        function zuixin() {
+            appcan.request.ajax({
+                type: "get",
+                async: false,
+                dataType: "jsonp",
+                url: webserviceurl,
+                data: {
+                    type: "zuiixin",
+                    useid: window.localStorage["useid"]
+                },
+                jsonp: "callback",
+                timeout: 3000,
+                success: function (data) {
+                    var content = data.shequ.replace(/<\/?[^>]*>/g, '');
+                    content = content.replace(/[ | ]*\n/g, '\n');
+                    content = content.replace(/\n[\s| | ]*\r/g, '\n');
+                    content = content.replace(/&nbsp;/ig, '');
+                    content = (content.length > 20) ? (content.substring(0, 19) + '...') : (content);
+
+                    $("div[tag='shequmain']").find('.zuixinxinxi').text(content);
+                    $("div[tag='yewushenqing']").find('.ufm1').text(data.shenqing);
+                    $("div[tag='shenhe']").find('.ufm1').text(data.shenhe);
+
+                }
+            })
+        }
+
+
+        function ddd() {
+
+        }
+
+        $(document).on('click', '.uw-app1', function () {
+            var name = $(this).attr("tag");
+            if (name == 'shenhe') {
+                //appcan.window.open("yewushenqing", "shenhe_drawer.html");
+                appcan.window.open({
+                    name: 'yewushenqing',
+                    dataType: 0,
+                    aniId: "2",
+                    data: 'shenhe_drawer.html'
+                });
+            } else {
+                //appcan.window.open("yewushenqing", name + ".html");
+                appcan.window.open({
+                    name: 'yewushenqing',
+                    dataType: 0,
+                    aniId: "2",
+                    data: name + '.html'
+                });
+            }
+        })
+
+    </script>
+</body>
+</html>

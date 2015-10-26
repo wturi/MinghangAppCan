@@ -1,0 +1,158 @@
+﻿<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="css/ui-box.css">
+    <link rel="stylesheet" href="css/ui-base.css">
+    <link rel="stylesheet" href="css/ui-color.css">
+    <link rel="stylesheet" href="css/appcan.icon.css">
+    <link rel="stylesheet" href="css/appcan.control.css">
+    <link rel="stylesheet" href="login_content/css/main.css">
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+
+    <div id="page_0" class="up ub ub-ver" tabindex="0" style="position:relative;">
+        <div id="content" class="ub-f1 tx-l ub ub-ver c-wh1">
+            <div class="uinn ub ub-ac ub-pc">
+                <div class="ub-img umhw1">
+                    <br />
+                    <br />
+                    <img src="login_content/css/myImg/logo.png" />
+                </div>
+            </div>
+            <div class="ub ub-ver ub-f1">
+                <form method="get" action="">
+                    <div class="uba b-gra umar-a uc-a1 c-wh">
+                        <div class="ub ub-ac">
+                            <div class="umhw resuser ub-img umar-l"></div>
+                            <div class="ub-f1 uinput uinn">
+                                <input placeholder="手机/邮箱/用户编码" id="uid" value="" type="text" class="uc-a1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="uba b-gra umar-a uc-a1 c-wh">
+                        <div class="ub ub-ac">
+                            <div class="umhw respwd ub-img umar-l"></div>
+                            <div class="ub-f1 uinput uinn">
+                                <input placeholder="密码" id="upwd" value="" type="password" class="uc-a1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="uin uinn">
+                        <div class="btn ub ub-ac bc-text-head ub-pc bc-btn uc-a1" id="submit">
+                            登　录
+                        </div>
+                    </div>
+                    <div class="umar-a ub t-blu">
+                        <div class="ub-f1 ulev-1 uinn3">
+                            忘记密码
+                        </div>
+                        <div class="ulev-1 uinn3" id="wuzhanghao">
+                            无账号快捷登录
+                        </div>
+                    </div>
+                    <button type="submit" class="uinvisible"></button>
+                </form>
+            </div>
+        </div>
+        <div id="footer" class=""></div>
+    </div>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script src="js/AllParamter.js"></script>
+    <script>
+        appcan.ready(function () {
+            ip();
+        });
+        function login() {
+            var name = $("#uid").val();
+            var pwd = $("#upwd").val();
+            if (name == "") {
+                appcan.window.openToast('账号不能为空', '2000');
+                return;
+            } else if (pwd == "") {
+                appcan.window.openToast('密码不能为空', '2000');
+                return;
+            } else {
+                var uid = $("#uid").val();
+                var upwd = $("#upwd").val();
+                appcan.request.ajax({
+                    type: "get",
+                    async: false,
+                    dataType: "jsonp",
+                    url: webserviceurl,
+                    data: { type: "Login", usename: uid, usepwd: upwd },
+                    jsonp: "callback",
+                    timeout: 3000,
+                    success: function (data) {
+                        if (data.useid != "") {
+                            window.localStorage["useid"] = data.useid;
+                            window.localStorage["usename"] = data.usename;
+                            window.localStorage["actorid"] = data.actorid;
+                            window.localStorage["usepwd"] = upwd;
+                            appcan.window.openToast("登录成功", 2000);
+                            setTimeout(function () {
+                                $('input').val('');
+                                appcan.window.evaluateScript('', 'ddd()')
+                            }, 1000);
+                        } else {
+                            appcan.window.openToast("登录失败", 2000);
+                        }
+                    },
+                    erroe: function (xhr, type) {
+                        //alert(xhr);
+                    }
+                })
+
+                $("form").submit();
+            }
+
+        }
+
+
+        appcan.button("#submit", "ani-act", function () {
+
+            login();
+
+            //
+        })
+
+
+        function ip() {
+            var url = 'http://chaxun.1616.net/s.php?type=ip&output=json&callback=?&_=' + Math.random();
+            $.getJSON(url, function (data) {
+                window.localStorage["IP"] = data.Ip;
+                //alert(window.localStorage["IP"]);
+            });
+        }
+
+
+
+
+        $("form").on('submit', function () {
+            appcan.request.postForm($("form"), function () {
+
+            }, function (err) {
+
+            });
+            return false;
+        });
+
+        $('#wuzhanghao').click(function () {
+            //appcan.window.open("gonggao", "gonggao.html");
+            appcan.window.open({
+                name: 'gonggao',
+                dataType: 0,
+                aniId: "2",
+                data: 'gonggao.html'
+            });
+        });
+
+    </script>
+</body>
+</html>

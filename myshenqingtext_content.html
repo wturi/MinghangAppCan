@@ -1,0 +1,173 @@
+﻿<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="css/ui-box.css">
+    <link rel="stylesheet" href="css/ui-base.css">
+    <link rel="stylesheet" href="css/ui-color.css">
+    <link rel="stylesheet" href="css/appcan.icon.css">
+    <link rel="stylesheet" href="css/appcan.control.css">
+    <link rel="stylesheet" href="myshenqingtext_content/css/main.css">
+    <!-- <link href="bootstrap/css/bootstrap.css" rel="stylesheet" /> -->
+    <style type="text/css">
+        table td {
+            width: 50%;
+        }
+    </style>
+</head>
+<body class="um-vp bc-bg" ontouchstart>
+    <div class="umar-a">
+        <div class="uc-a uba b-gra ub ub-ver c-wh uinn4 " id="content"></div>
+    </div>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script src="js/AllParamter.js"></script>
+    <script>
+        appcan.ready(function () {
+        appcan.initBounce();
+        var id = window.localStorage.myshenqingid;
+        switch (window.localStorage.myshenqingtype) {
+            case "1":
+                Buniess(id);
+                break;
+            case "2":
+                Buniess(id);
+                break;
+            case "3":
+                Repair(id);
+                break;
+            case "4":
+                Checkzs(id);
+                break;
+            case "5":
+                Checkxs(id);
+                break;
+        }
+    });
+    //临时
+    function Checkxs(id) {
+        appcan.request.ajax({
+            type: "get",
+            async: false,
+            dataType: "jsonp",
+            url: webserviceurl,
+            data: { type: "myshenqingxs", shenqingid: id },
+            jsonp: "callback",
+            timeout: 3000,
+            success: function (data) {
+                var str = '';
+                var people = '<table class="table table-striped table-hover  text-center"><tr><td>姓名</td><td>手机号</td></tr>';
+                var car = '<table class="table table-striped table-hover  text-center"><tr><td>车牌</td><td>车型</td></tr>';
+                var product = '<table class="table table-striped table-hover  text-center"><tr><td>名称</td><td>数量</td></tr>';
+                str += '<div class="uinnh1 t-gra1 ulev-app2">申请标题：<span>' + data.Title + '</span></div>';
+                str += '<div class="uinnh1 t-gra1 ulev-app2">申请内容：<span>' + data.Content + '</span></div></br>';
+                $.each(data.Temps, function (i, item) {
+                    var strs = item.TempDesc.split('|');
+                    if (item.UseType == "1") {
+                        people += '<tr><td>' + strs[0] + '</td><td>' + strs[1] + '</td></tr>';
+                    } else if (item.UseType == "2") {
+                        car += '<tr><td>' + strs[0] + '</td><td>' + strs[1] + '</td></tr>';
+                    } else if (item.UseType == "3") {
+                        product += '<tr><td>' + strs[0] + '</td><td>' + strs[1] + '</td></tr>';
+                    }
+                });
+                people += '</table>';
+                car += '</table>';
+                product += '</table>';
+                str = str + people + car + product;
+                $("#content").append(str);
+            }
+        })
+    };
+    //正式
+    function Checkzs(id){
+        appcan.request.ajax({
+            type: "get",
+            async: false,
+            dataType: "jsonp",
+            url: webserviceurl,
+            data: { type: "CheckInOutZs", shenqingid: id },
+            jsonp: "callback",
+            timeout: 3000,
+            success: function (data) {
+                var str = '';
+                var people = '<table class="table table-striped table-hover  text-center"><tr><td>姓名</td><td>手机号</td></tr>';
+                var car = '<table class="table table-striped table-hover  text-center"><tr><td>车牌</td><td>车型</td></tr>';
+                var product = '<table class="table table-striped table-hover  text-center"><tr><td>名称</td><td>数量</td></tr>';
+
+                str += '<div class="uinnh1 t-gra1 ulev-app2">申请标题：<span>' + data.Title + '</span></div>';
+                str += '<div class="uinnh1 t-gra1 ulev-app2">申请内容：<span>' + data.Content + '</span></div></br>';
+
+                $.each(data.Peoples,function(i,item){
+                     people += '<tr><td>' + item.PeopleName + '</td><td>' + item.PhoneNum + '</td></tr>';
+                })
+                $.each(data.Cars,function(i,item){
+                     car += '<tr><td>' + item.CarLicence + '</td><td>' + item.CarType + '</td></tr>';
+                })
+                $.each(data.Products,function(i,item){
+                     product += '<tr><td>' + item.ProductName + '</td><td>' + item.ProductQuantity + '</td></tr>';
+                })
+                    
+                people += '</table>';
+                car += '</table>';
+                product += '</table>';
+
+                str = str + people + car + product;
+                $("#content").append(str);
+            }
+        })
+    }
+
+    //人员制卡、证卡挂失
+    function Buniess(id) {
+        appcan.request.ajax({
+            type: "get",
+            async: false,
+            dataType: "jsonp",
+            url: webserviceurl,
+            data: { type: "myshenqingbuniess", shenqingid: id },
+            jsonp: "callback",
+            timeout: 3000,
+            success: function (data) {
+                var str = '';
+                var contents = data.BuniessContent.split("|+|");
+                str += '<div class="uinnh1 t-gra1 ulev-app2">申请标题：<span>' + contents[0] + '</span></div>';
+                str += '<div class="uinnh1 t-gra1 ulev-app2">申请内容：<span>' + contents[1] + '</span></div>';
+                if (contents.length == 3) {
+                    str += '<div class="uinnh1 t-gra1 ulev-app2">申请数量：<span>' + contents[2] + '</span></div></br>';
+                }
+                $("#content").append(str);
+
+            }
+        })
+    }
+
+    //报修
+    function Repair(id) {
+        appcan.request.ajax({
+            type: "get",
+            async: false,
+            dataType: "jsonp",
+            url: webserviceurl,
+            data: { type: "myshenqingrepair", shenqingid: id },
+            jsonp: "callback",
+            timeout: 3000,
+            success: function (data) {
+                var str = '';
+                str += '<div class="uinnh1 t-gra1 ulev-app2">申请标题：<span>' + data.RepairTitle + '</span></div>';
+                str += '<div class="uinnh1 t-gra1 ulev-app2">申请内容：<span>' + data.RepairContent + '</span></div>';
+                $("#content").append(str);
+
+            }
+        })
+
+
+    }
+
+    </script>
+</body>
+</html>

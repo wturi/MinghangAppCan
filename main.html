@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="css/ui-box.css">
+    <link rel="stylesheet" href="css/ui-base.css">
+    <link rel="stylesheet" href="css/ui-color.css">
+    <link rel="stylesheet" href="css/appcan.icon.css">
+    <link rel="stylesheet" href="css/appcan.control.css">
+</head>
+<body class="um-vp" ontouchstart>
+    <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+        <!--header开始-->
+        <div id="header" class="uh bc-text-head ub bc-head">
+            <div class="nav-btn" id="nav-left"></div>
+            <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0" id="title">莘庄智慧园区</h1>
+            <div class="nav-btn nav-bt" id="nav-right">
+                <div class="ub-img icon-adduser umw2 umh4"></div>
+            </div>
+        </div>
+        <div id="header1" class="uhide uh bc-text-head ub bc-head">
+            <div class="nav-btn" id="nav-left-fanhui">
+                <div class="fa fa-angle-left fa-2x"></div>
+            </div>
+            <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">个人中心</h1>
+            <div class="nav-btn nav-bt" id="nav-right">
+            </div>
+        </div>
+        <!--header结束-->
+        <!--content开始-->
+        <div id="content" class="ub-f1 tx-l"></div>
+        <!--content结束-->
+    </div>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script>
+        var c1c = 0;
+        window.uexOnload = function (type) {
+            uexWindow.onKeyPressed = function (keyCode) {
+                if (keyCode == 0) {
+                    if (!$('#header1').hasClass('uhide')) {
+                        appcan.frame.close('users_content');
+                        $('#header1').addClass('uhide');
+                        $('#header').removeClass('uhide');
+                    } else if (c1c > 0) {
+                        uexWidgetOne.exit();
+                    }
+                    else {
+                        uexWindow.toast(0, 5, '再按一次退出应用', 1000);
+                        c1c = 1; setTimeout(function () { c1c = 0; }, 2000);
+                    }
+                }
+            }
+            uexWindow.setReportKey(0, 1);
+            ddd();
+        };
+        
+        var f = parseInt(parseInt(window.screen.width)) / parseInt($('body').width(), 10);
+        var titHeight = $('#header').offset().height;
+        if (f == 1) {
+            $('h1').css('line-height','30px');
+            
+           titHeight=titHeight/f;
+        }if(f==2){
+            titHeight=titHeight/f; 
+        }
+        
+        $("#nav-right").click(function () {
+            appcan.frame.open("users_content", "users_content.html", 0, titHeight);
+            window.onorientationchange = window.onresize = function () {
+                appcan.frame.resize("users_content", 0, titHeight);
+            }
+            $('#header').addClass('uhide');
+            $('#header1').removeClass('uhide');
+            //appcan.window.open({
+            //    name: 'users',
+            //    dataType: 0,
+            //    aniId: "2",
+            //    data: 'users.html'
+            //});
+        });
+
+        $('#nav-left-fanhui').click(function () {
+            appcan.frame.close('users_content');
+            $('#header1').addClass('uhide');
+            $('#header').removeClass('uhide');
+        })
+
+        function ddd() {
+            //alert(titHeight);
+            if (window.localStorage['useid'] == null || window.localStorage['useid'] == '') {
+                appcan.frame.close('login_content');
+                appcan.frame.open("login_content", "login_content.html", 0, titHeight);
+                window.onorientationchange = window.onresize = function () {
+                    appcan.frame.resize("login_content", 0, titHeight);
+                }
+                $('#header').addClass('uhide');
+                $('#header1').addClass('uhide');
+            } else {
+                appcan.frame.close('main_content');
+                appcan.frame.open("main_content", "main_content.html", 0, titHeight);
+                window.onorientationchange = window.onresize = function () {
+                    appcan.frame.resize("main_content", 0, titHeight);
+                }
+                $('#header').removeClass('uhide');
+                $('#header1').addClass('uhide');
+            }
+        }
+    </script>
+</body>
+</html>

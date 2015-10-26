@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="css/ui-box.css">
+    <link rel="stylesheet" href="css/ui-base.css">
+    <link rel="stylesheet" href="css/ui-color.css">
+    <link rel="stylesheet" href="css/appcan.icon.css">
+    <link rel="stylesheet" href="css/appcan.control.css">
+    <link rel="stylesheet" href="myshenqing_content/css/main.css">
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <style type="text/css">
+        select {
+            margin: 5% 0%;
+        }
+        
+        #mayList {
+            border-top: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+    <select class="form-control" id="select">
+        <option value="1">人员制卡</option>
+        <option value="2">证卡挂失</option>
+        <option value="3">网上报修</option>
+        <option value="4">正式出入园</option>
+        <option value="5">临时出入园</option>
+    </select>
+    <div id="mayList"></div>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script src="js/appcan.listview.js"></script>
+    <script src="js/AllParamter.js"></script>
+    <script>
+        var useid=window.localStorage.useid;
+        var pageindexall=0;
+        appcan.ready(function () {
+        //appcan.initBounce();
+        var select = $("#select").val();
+        arrDateAjax(useid, select, 0);
+
+        appcan.window.setBounceType({
+                type: 0,
+                flag: 1,
+                color: '#fff',
+                callback: function (status, type) {
+                    if (status==1||status==0||status==2) {//下拉
+
+                        //alert(status)
+                        var select = $("#select").val();
+                        $("#mayList").empty();
+                        pageindexall=0;
+                        arrDateAjax(useid, select, pageindexall);
+                        //alert(status);
+                        appcan.window.resetBounceView(0);
+                    }
+                }
+            })
+
+            appcan.window.setBounceType({
+                type: 1,
+                flag: 1,
+                color: '#fff',
+                callback: function (status, type) {//翻页
+                    if (status==1||status==0||status==2) {
+                        var select = $("#select").val();
+                        pageindexall+=1;
+                        arrDateAjax(useid, select, pageindexall);
+                        appcan.window.resetBounceView(1);
+                    }
+                }
+            })
+    });
+       
+
+    function arrDateAjax(useid, buniesstype, pageindex) {
+        //alert(useid);
+        //appcan.window.openToast({ msg: '正在加载', duration: 0, position: 5, type: 1 });
+        appcan.request.ajax({
+            type: "get",
+            async: false,
+            dataType: "jsonp",
+            url: webserviceurl,
+            data: { type: "myshenqing", useid: useid, buniesstype: buniesstype, pageindex: pageindex },
+            jsonp: "callback",
+            timeout: 3000,
+            success: function (data) {
+                appcan.window.closeToast();
+                jsontext = "";
+                $.each(data, function (i, item) {
+                    jsontext += ' <li onclick="ddd()" class="ubb ub bc-border t-bla ub-ac lis" data-index="0" tag="' + item.id + '">'
+                             +'<ul class="ub-f1 ub ub-pj ub-ac"><ul class="ub-f1 ub ub-ver marg-l"><li class="bc-text ub ub-ver ut-m line1">' 
+                             + item.title + '</li><li class="ulev-1 sc-text1 uinn3"><div class="ub">';
+                    switch (item.status) {
+                        case "审核通过":
+                            jsontext += '<div class="c-green  bc-text-head uinn3 uc-a-list1">' + item.statusname + '审核通过</div>';break;
+                        case "审核失败":
+                            jsontext += '<div class="c-red-oa  bc-text-head uinn3 uc-a-list1">不通过</div>';break;
+                        case "审核中":
+                            jsontext += '<div class="c-orange  bc-text-head uinn3 uc-a-list1">审核中</div>';break;
+                    }
+                    jsontext += '</div></li></ul><li class="fa fa-angle-right ulev2"></li></ul></li>';
+                })
+                $("#mayList").append(jsontext);
+                //alert(jsontext);
+            }
+        })
+    }
+
+    function ddd() {
+        var title = $(this).children().children().children().eq(0).text();
+        window.localStorage.myshenqingtitle = title;
+        window.localStorage.myshenqingid = $(this).attr("tag");
+        window.localStorage.myshenqingtype = $("#select").val();
+        //appcan.window.open("myshenqingtext", "myshenqingtext.html");
+        appcan.window.open({
+            name: 'myshenqingtext',
+            dataType: 0,
+            aniId: "2",
+            data: 'myshenqingtext.html'
+        });
+    }
+
+    $(document).on("click", ".ubb", function () {
+        var title = $(this).children().children().children().eq(0).text();
+        window.localStorage.myshenqingtitle = title;
+        window.localStorage.myshenqingid = $(this).attr("tag");
+        window.localStorage.myshenqingtype = $("#select").val();
+        //appcan.window.open("myshenqingtext", "myshenqingtext.html");
+        appcan.window.open({
+            name: 'myshenqingtext',
+            dataType: 0,
+            aniId: "2",
+            data: 'myshenqingtext.html'
+        });
+    })
+
+    $("#select").change(function () {
+        var select = $(this).val();
+        $("#mayList").empty();
+        var useid=window.localStorage.useid;
+        arrDateAjax(useid, select, 0);
+    })
+
+    </script>
+</body>
+</html>

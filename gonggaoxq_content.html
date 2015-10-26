@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="css/ui-box.css">
+    <link rel="stylesheet" href="css/ui-base.css">
+    <link rel="stylesheet" href="css/ui-color.css">
+    <link rel="stylesheet" href="css/appcan.icon.css">
+    <link rel="stylesheet" href="css/appcan.control.css">
+    <link rel="stylesheet" href="gonggaoxq_content/css/main.css">
+</head>
+
+<body class="um-vp bc-bg" ontouchstart>
+    <div id='' class=' ub-fh  uof'>
+        <div id='slider' class='slider'></div>
+    </div>
+    <div class="uinn-m ub-ver ub ub-ab">
+        <div class="ub">
+        </div>
+        <div class="ub-f1 content">
+
+        </div>
+    </div>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script src="js/appcan.slider.js"></script>
+    <script src="js/AllParamter.js"></script>
+    <script>
+        appcan.ready(function () {
+        appcan.initBounce();
+        //comImg();
+        gonggao();
+    })
+    function comImg() {
+        //产品详情图片轮播
+        var slider = appcan.slider({
+            selector: '#slider',
+            aspectRatio: 9 / 16,
+            hasLabel: false,
+            index: 0
+        });
+        slider.set([{
+            img: "main_content/css/myImg/1.jpg"
+        }, {
+            img: "main_content/css/myImg/3.jpg"
+        }])
+        slider.on("clickItem", function (index, data) {
+            console.log(index, data);
+
+        })
+    }
+    
+    
+    function gonggao(){
+        appcan.request.ajax({
+            type:"get",
+            async:false,
+            dataType:"jsonp",
+            url:webserviceurl,
+            data:{
+                 type: "gonggaodan",
+                 peblishid:window.localStorage.gonggaoid
+             },
+            jsonp:"callback",
+            timeout:5000,
+            success:function(data){
+                $('.content').html(data.pp.PeblishContent);
+                var slider = appcan.slider({
+                    selector: '#slider',
+                    aspectRatio: 9 / 16,
+                    hasLabel: false,
+                    index: 0
+                });
+                var listdata='[';
+                $.each(data.fs,function(i,item){
+                    listdata+='{img: "'+imgurl+item.FilePath+'"},';
+                })
+                listdata+=']';
+                //alert(listdata)
+                slider.set(eval("("+listdata+")"))
+                
+            }
+        })
+    }
+    </script>
+</body>
+
+</html>

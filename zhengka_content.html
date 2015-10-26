@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <link href="bootstrap/DateTime/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+    <link href="bootstrap/DateTime/bootstrap-datetimepicker.css" rel="stylesheet" />
+    <style type="text/css">
+        .row {
+            margin-top: 1.5em;
+            margin-left: 0.5em;
+            margin-right: 0.5em;
+        }
+    </style>
+</head>
+<body class="um-vp bc-bg" ontouchstart>
+    <div class="row">
+        <div class="col-md-12">
+            <textarea class="form-control" id="PublishContent" rows="6" placeholder="请输入挂失原因"></textarea>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <button type="button" id="btnzong" class="btn btn-info btn-lg">确认提交</button>
+        </div>
+    </div>
+    <br />
+    <br />
+    <br />
+    <script src="js/jquery-1.8.2.js"></script>
+    <script src="js/bootstrap-datetimepicker.js"></script>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script src="js/AllParamter.js"></script>
+    <script>
+    $("#btnzong").click(function () {
+        var content = $("#PublishContent").val();
+        var useid = window.localStorage["useid"];
+        var client = window.localStorage["IP"];
+        appcan.request.ajax({
+            type: "get",
+            async: false,
+            dataType: "jsonp",
+            url: webserviceurl,
+            data: { type: "zhengkaguashi", useid: useid, content: content, clientip: client },
+            jsonp: "callback",
+            timeout: 3000,
+            success: function (data) {
+                if (data == 1) {
+                    appcan.window.openToast("提交成功", 1000);
+                } else {
+                    appcan.window.openToast("提交失败", 1000);
+                }
+            }
+        })
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="css/ui-box.css">
+    <link rel="stylesheet" href="css/ui-base.css">
+    <link rel="stylesheet" href="css/ui-color.css">
+    <link rel="stylesheet" href="css/appcan.icon.css">
+    <link rel="stylesheet" href="css/appcan.control.css">
+    <link rel="stylesheet" href="gonggao_content/css/main.css">
+</head>
+<body class="um-vp bc-bg" ontouchstart>
+    <div class="ub ub-ver uinn-a1">
+        <div class="ub ub-ver" id="listview">
+        </div>
+    </div>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script src="js/appcan.tab.js"></script>
+    <script src="js/appcan.listview.js"></script>
+    <script src="js/AllParamter.js"></script>
+    <script>
+    var pageindex=0;
+        appcan.ready(function () {
+            //appcan.initBounce();
+            AllAjax(pageindex);
+            appcan.window.setBounceType({
+                type: 0,
+                flag: 1,
+                color: '#fff',
+                callback: function (status, type) {
+                    if ( status == 1) {//下拉]
+                        $('#listview').empty();
+                        AllAjax(0);
+                        appcan.window.resetBounceView(0);
+                    }
+                }
+            })
+
+            appcan.window.setBounceType({
+                type: 1,
+                flag: 1,
+                color: '#fff',
+                callback: function (status, type) {//翻页
+                    if (status == 1) {
+                        pageindex+=1;
+                        AllAjax(pageindex);
+                        appcan.window.resetBounceView(1);
+                    }
+                }
+            })
+        });
+
+        function AllAjax(pageindex) {
+            appcan.request.ajax({
+                type: "get",
+                async: false,
+                dataType: "jsonp",
+                url: webserviceurl,
+                data: {
+                    type: "gonggao",
+                    pageindex: pageindex,
+                    pagenumber: 10
+                },
+                jsonp: "callback",
+                timeout: 5000,
+                success: function (data) {
+                    var str = '';
+                    $.each(data, function (i, item) {
+                        var content = item.pp.PeblishContent.replace(/<\/?[^>]*>/g, '');
+                        content = content.replace(/[ | ]*\n/g, '\n');
+                        content = content.replace(/\n[\s| | ]*\r/g, '\n');
+                        content = content.replace(/&nbsp;/ig, '');
+                        content = (content.length > 40) ? (content.substring(0, 39) + '...') : (content);
+                        str += '<li class="ubb ub bc-border t-bla ub-ac lis" onclick="ddd()" data-index="0" tag="' + item.pp.PeblishID + '" title="' + item.pp.PeblishTitle + '">'
+                        + ' <ul class="ub ub ub-ver"><li class=""><div class="lis-icon ub-img" style="background-image:url(' + imgurl + item.fs[0].FilePath + ')"></div>'
+                        + '<div class="ulev-1 bc-text umar-t"></div>'
+                        + '</li></ul><ul class="ub-f1 ub ub-pj ub-ac"><ul class="ub-f1 ub ub-ver marg-l"><li class="bc-text ub ub-ver ut-m line1">' + item.pp.PeblishTitle + '</li>'
+                        + '<li class="ulev-1 sc-text1 uinn3"><div class="ulev-4 tx-l t-gra-4b uinn-RL3">' + content + '</div>'
+                        + '</li></ul></ul></li>'
+                    })
+                    $('#listview').append(str);
+                }
+            })
+        }
+
+        function ddd() {
+
+        }
+
+        $(document).on('click', '.lis', function () {
+            var id = $(this).attr('tag');
+            var title = $(this).attr('title');
+            window.localStorage.gonggaoid = id;
+            window.localStorage.gonggaotitle = title;
+            //alert(id);
+            appcan.window.open({
+                name: 'gonggaoxq',
+                dataType: 0,
+                aniId: "2",
+                data: 'gonggaoxq.html'
+            });
+        })
+    </script>
+</body>
+</html>

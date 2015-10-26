@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="css/ui-box.css">
+    <link rel="stylesheet" href="css/ui-base.css">
+    <link rel="stylesheet" href="css/ui-color.css">
+    <link rel="stylesheet" href="css/appcan.icon.css">
+    <link rel="stylesheet" href="css/appcan.control.css">
+    <link rel="stylesheet" href="shenhe_content/css/main.css">
+    <style type="text/css">
+        .bc-btn{
+            background-color: rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body class="um-vp bc-bg" ontouchstart>
+    <div id="mayList" class="sc-border sc-bg"></div>
+    <div class="btn ub ub-ac bc-text-head ub-pc bc-btn uc-a1" id="gengduo">点击加载更多</div>
+    <br/>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script src="js/appcan.listview.js"></script>
+    <script src="js/AllParamter.js"></script>
+    <script>
+        var pagenumber = 0;
+        var typeid = '';
+        var str = '';
+        window.uexOnload = function(type){
+        if(!type){
+            appcan.initBounce();
+            window.localStorage.shenhe_drawertypeid="all";
+            var useid = window.localStorage["useid"];
+            SelectAll(useid, "all", "", pagenumber, 10);
+
+            var plat = uexWidgetOne.getPlatform();
+            //如果是android平台，则监听返回按钮事件
+            if(plat){
+            uexWindow.onKeyPressed=function(keyCode){
+                if(keyCode==0)
+                uexWidgetOne.exit();
+                }
+            uexWindow.setReportKey(0,1);
+            }
+         }
+        }
+        appcan.ready(function () {
+            //appcan.initBounce();
+            window.localStorage.shenhe_drawertypeid="all";
+            var useid = window.localStorage["useid"];
+            SelectAll(useid, "all", "", pagenumber, 10);
+        })
+
+        appcan.button("#gengduo", "ani-act", function () {
+
+            var shenhecontentstr=window.localStorage['shenhecontentstr'];
+            var shenhetypeid=window.localStorage.shenhe_drawertypeid;
+            var useid = window.localStorage.useid;
+
+            pagenumber+=1;
+            appcan.window.openToast('正在加载...',1000);
+            setTimeout(function(){
+                SelectAll(useid,shenhetypeid,shenhecontentstr,pagenumber,10);
+            },1000);
+        })
+
+        function SelectAllceshi(str, typeid, pageindex) {
+            var useid = window.localStorage.useid;
+            window.localStorage['shenhecontentstr']=str;
+            typeid = typeid;
+            str = str;
+            $('#mayList').empty();
+            SelectAll(useid, typeid, str, pageindex, 10);
+        }
+
+        function SelectAll(useid, statetype, soutext, pageindex, number) {
+           if(soutext==null){
+               soutext="";
+           }
+            appcan.request.ajax({
+                type: "get",
+                async: false,
+                dataType: "jsonp",
+                url: webserviceurl,
+                data: {
+                    type: "shenheAll",
+                    useid: useid,
+                    statetype: statetype,
+                    pageindex: pageindex,
+                    pagenumber: number,
+                    suotext: soutext
+                },
+                jsonp: "callback",
+                timeout: 3000,
+                success: function (data) {
+                    if (data == 1) {
+                        appcan.window.openToast("网络错误!", 1500);
+                    } else {
+                        var jsontext = '';
+                        $.each(data, function (i, item) {
+                            var contentstr;
+                            switch (statetype) {
+                                case '4': contentstr = item.Content; break;
+                                case '5': contentstr = item.Content; break;
+                                case '1': contentstr =item.Title+'|+|'+item.Content; break;
+                                case '2': contentstr = item.Title+'|+|'+item.Content; break;
+                                case 'all': 
+                                    if(item.Content.split('|+|').length==1){
+                                        contentstr =item.Title+'|+|'+item.Content;  
+                                    }else{
+                                        contentstr=item.Content;
+                                    }
+                                break;
+                            }
+
+                            jsontext += '<li onclick="ddd()" class="ubb ub bc-border t-bla ub-ac lis" data-index="0" tag="' + item.ApplyID + '" content="' + contentstr + '" updater="' + item.Updater + '"><ul class="ub-f1 ub ub-pj ub-ac"><ul class="ub-f1 ub ub-ver marg-l"><li class="bc-text ub ub-ver ut-m line1">' + item.Title.split('|+|')[0] + '</li><li class="ulev-1 sc-text1 uinn3"><div class="ub">';
+
+                            var typeid = $.trim(item.typeid);
+                            switch (typeid) {
+                                case '4': jsontext += '<div class="c-orange  bc-text-head uinn3 uc-a-list1 typename" typename="人员制卡" >类别:人员制卡</div>'; break;
+                                case '5': jsontext += '<div class="c-orange  bc-text-head uinn3 uc-a-list1 typename" typename="证卡挂失" >类别:证卡挂失</div>'; break;
+                                case '1': jsontext += '<div class="c-orange  bc-text-head uinn3 uc-a-list1 typename" typename="物业报修" >类别:物业报修</div>'; break;
+                                case '2': jsontext += '<div class="c-orange  bc-text-head uinn3 uc-a-list1 typename" typename="公共设施报修" >类别:公共设施报修</div>'; break;
+                            }
+                            jsontext += '<div class="c-green  bc-text-head uinn3 uc-a-list1" style="margin-left:0.5em;">申请人：' + item.Updater + '</div>';
+                            jsontext += '</div></li></ul><li class="fa fa-angle-right ulev2"></li></ul></li>';
+                        })
+                        $('#mayList').append(jsontext);
+                    }
+                }
+            })
+        }
+
+        function ddd() {
+            
+        }
+
+        $(document).on('click', '.lis', function () {
+            var id = $(this).attr('tag');
+            var content = $(this).attr('content');
+            var Updater = $(this).attr('updater');
+            var typename = $(this).find('.typename').attr('typename');
+            window.localStorage.shenhetextid = id;
+            window.localStorage.shenhetexttitle = content;
+            window.localStorage.shenheupdater = Updater;
+            window.localStorage.shenhetypename = typename;
+            appcan.window.open({
+                name: 'shenhetext',
+                dataType: 0,
+                aniId: "2",
+                data: 'shenhetext.html'
+            });
+        })
+    </script>
+</body>
+</html>

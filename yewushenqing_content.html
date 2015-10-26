@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="css/ui-box.css">
+    <link rel="stylesheet" href="css/ui-base.css">
+    <link rel="stylesheet" href="css/ui-color.css">
+    <link rel="stylesheet" href="css/appcan.icon.css">
+    <link rel="stylesheet" href="css/appcan.control.css">
+    <link rel="stylesheet" href="yewushenqing_content/css/main.css">
+    <link href="bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <style type="text/css">
+        .thumbnail {
+            width: 29%;
+            margin: 3% 2%;
+            float: left;
+        }
+
+            .thumbnail .caption {
+                padding: 0;
+                text-align: center;
+            }
+            
+    </style>
+</head>
+<body class="um-vp bc-bg" ontouchstart>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script>
+    appcan.ready(function () {
+        appcan.initBounce();
+        menus();
+    })
+
+    $(document).on('click','.thumbnail',function(){
+        var name = $.trim($(this).children().eq(1).text());
+        window.localStorage.yewutitle = name;
+        if (name == "我的申请") {
+            //appcan.window.open("myshenqing", "myshenqing.html");
+            appcan.window.open({
+                name: 'myshenqing',
+                dataType: 0,
+                aniId: "2",
+                data: 'myshenqing.html'
+            });
+        } else {
+            var url = $(this).children().eq(1).attr("tag");
+            window.localStorage.typeid = $(this).children().eq(1).attr("typeid");
+            if (url != null && url != "") {
+                appcan.window.open("myshenqingcontent", url + ".html");
+                appcan.window.open({
+                    name: 'myshenqingcontent',
+                    dataType: 0,
+                    aniId: "2",
+                    data: url + ".html"
+                });
+            }
+        }
+    })
+
+    function menus(){
+       var menusdata=JSON.parse(window.localStorage.menusdata);
+       var strvalue='';
+       var strvalue1='';
+       $.each(menusdata,function(i,item){
+            if(item.Type=='Phone'){
+                return true;
+            }
+            $.each(item.List,function(i,items){
+                if(items.FunctionName.indexOf('授权')!=-1){
+                    return true;
+                }
+                if(items.ischecked==true&&items.isphone==true){
+                    if(items.FunctionName.indexOf('状态')!=-1){
+                        strvalue1+='<div class="thumbnail"><img src="yewushenqing_content/css/myImg/elec1.png" alt="..."><div class="caption"><h5>我的申请</h5></div></div>';
+                    }else{
+                        strvalue+='<div class="thumbnail"><img src="yewushenqing_content/css/myImg/elec1.png" alt="..."><div class="caption"  tag="'+getUrlParam(items.Type,'tag')+'"><h5>'+items.FunctionName.replace('申请','')+'</h5></div></div>';
+                    }
+                }
+            })
+       })
+       $('body').append(strvalue+strvalue1);
+    }
+
+    //获取url中的参数
+        function getUrlParam(url,name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+            //var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+            var r=url.match(reg);
+            if (r != null) return unescape(r[2]); return null; //返回参数值
+        }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+﻿<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="css/ui-box.css">
+    <link rel="stylesheet" href="css/ui-base.css">
+    <link rel="stylesheet" href="css/ui-color.css">
+    <link rel="stylesheet" href="css/appcan.icon.css">
+    <link rel="stylesheet" href="css/appcan.control.css">
+    <link rel="stylesheet" href="shequ_content/css/main.css">
+   <!--  <link href="bootstrap/css/bootstrap.css" rel="stylesheet" /> -->
+    <style type="text/css">
+        .title {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .fabu {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 1.5em;
+            color: #00a0ea;
+        }
+
+        #comment {
+            padding-left: 2%;
+            padding-right: 2%;
+        }
+    </style>
+</head>
+<body class="um-vp bc-bg" ontouchstart>
+    <div class="uin ub-fv" id="comment"></div>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script src="js/AllParamter.js"></script>
+    <script>
+        appcan.ready(function () {
+            appcan.initBounce();
+            TopicList();
+        })
+
+
+        function TopicList() {
+            var boardid = window.localStorage.shequid;
+            appcan.request.ajax({
+                type: "get",
+                async: false,
+                dataType: "jsonp",
+                url: webserviceurl,
+                data: { type: "TopicList", boardid: boardid },
+                jsonp: "callback",
+                timeout: 3000,
+                success: function (data) {
+                    var str = '';
+                    $.each(data, function (i, item) {
+                        var titlestr = item.Title.length > 8 ? item.Title.substring(0, 7) + '...' : item.Title;
+                        str += '<div class="ub ub-ver b-gray2 uba uin2 topicList" onclick="ddd()" tag="' + item.Id + '">'
+                        + '<div class="ub ub-pj ub-f1"><div class="ulev-1 umar-rc3 sc-text-active"><span class="title">' + titlestr + '</span> -- <span class="name">' + item.PostUsername + '</span></div><div class="ub ub-pe bc-btn ulev-4 bc-text-head uinn-c3">' + item.ViewCount + '人已看</div></div>' + '<div class="ulev-4 txt-color1 uin1">' + item.LastPostDatetime + '</div></div>';
+                    })
+
+                    $('#comment').empty().append(str);
+                }
+            })
+        }
+
+
+        function ddd() {
+            var id = $(this).attr("tag");
+            //alert(id);
+            window.localStorage["topicid"] = id;
+            //appcan.window.open("shequcontent", "shequcontent.html");
+            appcan.window.open({
+                name: 'shequcontent',
+                dataType: 0,
+                aniId: "2",
+                data: 'shequcontent.html'
+            });
+            //alert(1);
+        }
+
+        // appcan.button('.topicList','btn-act',function(){
+        //     var id = $(this).attr("tag");
+        //     alert(id);
+        //     window.localStorage["topicid"] = id;
+        //     appcan.window.open("shequcontent", "shequcontent.html");
+        //     appcan.window.open({
+        //         name: 'shequcontent',
+        //         dataType: 0,
+        //         aniId: "2",
+        //         data: 'shequcontent.html'
+        //     });
+        //     //alert(1);
+        // })
+
+        $(document).on('click', '.topicList', function () {
+            var id = $(this).attr("tag");
+            //alert(id);
+            window.localStorage["topicid"] = id;
+            appcan.window.open("shequcontent", "shequcontent.html");
+            appcan.window.open({
+                name: 'shequcontent',
+                dataType: 0,
+                aniId: "2",
+                data: 'shequcontent.html'
+            });
+            //alert(1);
+        })
+
+
+
+
+    </script>
+</body>
+</html>

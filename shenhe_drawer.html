@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="css/ui-box.css">
+    <link rel="stylesheet" href="css/ui-base.css">
+    <link rel="stylesheet" href="css/ui-color.css">
+    <link rel="stylesheet" href="css/appcan.icon.css">
+    <link rel="stylesheet" href="css/appcan.control.css">
+    <link rel="stylesheet" href="shenhe_drawer/css/main.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <style>
+        body{
+            background-color: white;
+        }
+            .drawer {
+                margin-left: 20%;
+            }
+            .shadow {
+                -webkit-box-shadow: inset -4px 1px 3px rgba(0, 0, 0, .2);
+                box-shadow: inset -4px 1px 3px rgba(0, 0, 0, .2)
+            }
+            
+            #content{
+                background-color: white;
+                width: 80%;
+            }
+            
+            #header>div,#header>h1{
+                color: black;
+            }
+            #nav-left,#nav-right{
+                text-align: center;
+                width: 30%;
+            }
+            #nav-center{
+                text-align: center;
+                width: 40%;
+            }
+            #nav-left,#nav-right,#nav-center{
+                font-size: 1em;
+                font-weight: bold;
+            }
+        </style>
+</head>
+<body class="um-vp " ontouchstart>
+    <div id="page_0"  class="up ub ub-ver  uhide" tabindex="0" >
+        <div id="header" class="uh sc-bg-active"></div>
+        <div id="content"  class=" tx-l shadow drawer ub ub-ver ub-f1 ub-fv t-wh ub-img3 ">
+            <div id="header" class="uh  ub">
+                <div class="nav-btn " id="nav-left">取消</div>
+                <div class="nav-btn" id="nav-center" >筛选</div>
+                <div class="nav-btn " id="nav-right">确认</div>
+            </div>
+            <div id="headercontent">
+                <div class="col-xs-12">
+                    <div class="form-group" style="margin-top:10%;">
+                        <label>类别</label>
+                        <select name="" id="typeid" class="form-control">
+                            <option value="all">全部</option>
+                            <option value="4">人员制卡</option>
+                            <option value="5">在线挂失</option>
+                            <option value="1">物业报修</option>
+                            <option value="2">公共设施报修</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-xs-12">
+                    <div class="form-group">
+                        <label for="">关键字</label>
+                        <input type="text" class="form-control" placeholder="请输入搜索关键字" id="guanjianzi"></div>
+                </div>
+                
+                <div class="col-xs-12"></div>
+            </div>
+        </div>
+    </div>
+    <script src="js/appcan.js"></script>
+    <script src="js/appcan.control.js"></script>
+    <script>
+        var f = parseInt(parseInt(window.screen.width)) / parseInt($('body').width(), 10);
+        appcan.ready(function() {
+            appcan.window.open("shenhe", "shenhe.html", 10, 256);
+            appcan.window.subscribe("main_window_open", function() {
+                setTimeout(function() {
+                    $("#page_0").removeClass("uhide");
+                }, 0);
+            })
+            appcan.window.subscribe("draw_close", function() {
+                appcan.window.close(-1);
+            });
+            fontsize();
+        });
+        
+        function fontsize(){
+            $('#nav-left').css('font-size',(parseInt($('#nav-left').css('font-size'))*f)+'px')
+            $('#nav-right').css('font-size',(parseInt($('#nav-right').css('font-size'))*f)+'px')
+            $('#nav-center').css('font-size',(parseInt($('#nav-center').css('font-size'))*f)+'px')
+            $('#headercontent').find('label').css('font-size',parseInt($('#headercontent').find('label').css('font-size'))*f+'px');
+            $('#headercontent').find('select').css('font-size',parseInt($('#headercontent').find('select').css('font-size'))*f+'px');
+            $('#headercontent').find('input').css('font-size',parseInt($('#headercontent').find('input').css('font-size'))*f+'px');
+            $('#guanjianzi').css('height',parseInt($('#guanjianzi').css('line-height'))*2)
+        }
+        
+        
+        appcan.button("#close_btn", "btn-act", function() {
+            appcan.window.publish("main_window_close", "");
+            setTimeout(function(){
+               appcan.window.close(-1); 
+            },0)
+        })
+        appcan.button('#nav-left','btn-act',function(){
+             appcan.window.evaluateScript({name:'shenhe',scriptContent:'animFrame();'});
+             $("#headercontent").load(location.href + " #headercontent>*", "");
+        })
+        appcan.button('#nav-right','btn-act',function(){
+            var str=$('#guanjianzi').val();
+            var typeid=$('#typeid').val();
+            window.localStorage.shenhe_drawerstr=str;
+            window.localStorage.shenhe_drawertypeid=typeid;
+            uexWindow.evaluatePopoverScript("shenhe", "shenhe_content", "SelectAllceshi('"+str+"','"+typeid+"','0');");
+            appcan.window.evaluateScript({name:'shenhe',scriptContent:'animFrame();'});
+        })
+    </script>
+</body>
+</html>
